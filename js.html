@@ -1,0 +1,48 @@
+<!DOCTYPE html>  
+<html>  
+<head>  
+    <title>بحث عن منطقة وحساب المسافة</title>  
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY"></script>  
+</head>  
+<body>  
+    <h2>أدخل اسم المنطقة:</h2>  
+    <input type="text" id="locationInput" placeholder="اسم المنطقة"/>  
+    <button onclick="searchLocation()">ابحث</button>  
+    <div id="result"></div>  
+
+    <script>  
+        function searchLocation() {  
+            const locationName = document.getElementById('locationInput').value;  
+
+            const geocoder = new google.maps.Geocoder();  
+
+            geocoder.geocode({ 'address': locationName }, function(results, status) {  
+                if (status === 'OK') {  
+                    const location = results[0].geometry.location;  
+                    document.getElementById('result').innerText = 'الموقع: ' + results[0].formatted_address + '\n' +  
+                        'إحداثيات: ' + location.lat() + ', ' + location.lng();  
+
+                    // على سبيل المثال، حساب المسافة إلى نقطة أخرى (مثلاً، مركز معين)  
+                    const destination = { lat: 30.033, lng: 31.233 }; // مثال: وسط القاهرة  
+                    const directionsService = new google.maps.DirectionsService();  
+
+                    directionsService.route({  
+                        origin: location,  
+                        destination: destination,  
+                        travelMode: google.maps.TravelMode.DRIVING,  
+                    }, function(response, status) {  
+                        if (status === 'OK') {  
+                            const leg = response.routes[0].legs[0];  
+                            alert('المسافة: ' + leg.distance.text + ', الزمن المقدر: ' + leg.duration.text);  
+                        } else {  
+                            alert('تعذر حساب المسافة: ' + status);  
+                        }  
+                    });  
+                } else {  
+                    alert('لم يتم العثور على الموقع: ' + status);  
+                }  
+            });  
+        }  
+    </script>  
+</body>  
+</html>  
